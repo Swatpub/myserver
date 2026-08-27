@@ -3,26 +3,20 @@ import requests
 
 app = Flask(__name__)
 
-BOT_TOKEN = "8914918786:AAFaQZek5qpLLxf2foCXkULVfn2Anaq_lAg"
+TOKEN = "8914918786:AAFaQZek5qpLLxf2foCXkULVfn2Anaq_lAg"
 CHAT_ID = "8738009031"
 
 @app.route('/')
-def home():
-    return "Server is running!"
+def index():
+    return "Bot is active"
 
-@app.route('/data', methods=['GET', 'POST'])
-def receive():
-    if request.method == 'POST':
-        msg = request.data.decode()
-    else:
-        msg = request.args.get('msg', 'GET request')
-    
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    try:
-        requests.post(url, json={"chat_id": CHAT_ID, "text": msg})
-        return "OK"
-    except Exception as e:
-        return f"Error: {e}"
+@app.route('/data', methods=['POST'])
+def send_message():
+    msg = request.data.decode()
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    data = {"chat_id": CHAT_ID, "text": msg}
+    requests.post(url, json=data)
+    return "OK"
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
