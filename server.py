@@ -10,13 +10,19 @@ CHAT_ID = "8738009031"
 def index():
     return "Bot is active"
 
-@app.route('/data', methods=['POST'])
+@app.route('/data', methods=['GET', 'POST'])
 def send_message():
-    msg = request.data.decode()
+    if request.method == 'POST':
+        msg = request.data.decode()
+    else:
+        msg = request.args.get('msg', 'GET request test')
+    
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-    data = {"chat_id": CHAT_ID, "text": msg}
-    requests.post(url, json=data)
-    return "OK"
+    try:
+        requests.post(url, json={"chat_id": CHAT_ID, "text": msg})
+        return "OK"
+    except Exception as e:
+        return f"Error: {e}"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
